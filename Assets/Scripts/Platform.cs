@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformPowerL : MonoBehaviour
+public class Platform : MonoBehaviour
 {
     [SerializeField] private float _angle;
     [SerializeField] private float _power;
