@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
    [SerializeField] private GameObject _platform;
+   [SerializeField] private GameObject _hoop;
    
    [SerializeField] private Image[] _targetImage;
    [SerializeField] private Sprite _missionCheckSprite;
@@ -55,5 +56,19 @@ public class GameManager : MonoBehaviour
         {
             //!gameover panel
             Debug.Log("Game Over!");
+        }
+        public void WidenTheHoop()
+        {
+            StartCoroutine(WidenHoopCoroutine());
+        }
+
+        private IEnumerator WidenHoopCoroutine()
+        {
+            Vector3 originalScale = _hoop.transform.localScale;
+            _hoop.transform.localScale = new Vector3(95f, 95f, 95f);
+            
+            yield return new WaitForSeconds(10f);
+            
+            _hoop.transform.localScale = originalScale;
         }
 }
