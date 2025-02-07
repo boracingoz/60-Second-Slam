@@ -5,9 +5,14 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Game Object")]
    [SerializeField] private GameObject _platform;
    [SerializeField] private GameObject _hoop;
+   [SerializeField] private GameObject _widdenHoop;
+   [SerializeField] private GameObject[] _powerUpLocation;
    
+
+   [Header("UI")]
    [SerializeField] private Image[] _targetImage;
    [SerializeField] private Sprite _missionCheckSprite;
    [SerializeField] private int _targetBall;
@@ -24,6 +29,8 @@ public class GameManager : MonoBehaviour
             _targetImage[i].gameObject.SetActive(true);
 
         }
+
+        Invoke("PowerUpsLocation", 3f);
    }
         
         void Update()
@@ -38,6 +45,14 @@ public class GameManager : MonoBehaviour
                 if (_platform.transform.position.x < 7.3)
                 _platform.transform.position = Vector3.Lerp(_platform.transform.position, new Vector3(_platform.transform.position.x + .3f, _platform.transform.position.y, _platform.transform.position.z), 0.50f);
             }
+        }
+
+        void PowerUpsLocation()
+        {
+            int randomNumber = Random.Range(0,_powerUpLocation.Length-1);
+
+            _widdenHoop.transform.position = _powerUpLocation[randomNumber].transform.position;
+            _widdenHoop.SetActive(true);
         }
 
         public void Basket()

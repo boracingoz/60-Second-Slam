@@ -11,6 +11,4 @@ public class Platform : MonoBehaviour
     {
         other.gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(_angle,90,0) * _power, ForceMode.Force);
     }
-
-
 }
