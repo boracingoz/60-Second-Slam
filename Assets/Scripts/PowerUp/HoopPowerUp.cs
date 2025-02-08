@@ -35,6 +35,6 @@ public class HoopPowerUp : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         gameObject.SetActive(false);
-        _gameManager.WidenTheHoop();
+        _gameManager.WidenTheHoop(transform.position);
     }
 }

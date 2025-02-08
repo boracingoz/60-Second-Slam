@@ -10,6 +10,12 @@ public class GameManager : MonoBehaviour
    [SerializeField] private GameObject _hoop;
    [SerializeField] private GameObject _widdenHoop;
    [SerializeField] private GameObject[] _powerUpLocation;
+
+   [Header("Audio")]
+   [SerializeField] private AudioSource[] _audios;
+
+   [Header("Partical Effects")]
+   [SerializeField] private ParticleSystem[] _effects;
    
 
    [Header("UI")]
@@ -55,25 +61,35 @@ public class GameManager : MonoBehaviour
             _widdenHoop.SetActive(true);
         }
 
-        public void Basket()
+        public void Basket(Vector3 pos)
         {
             _ballScore++;
             _targetImage[_ballScore - 1 ].sprite = _missionCheckSprite;
-
+            _audios[4].Play();
+            _effects[0].transform.position = pos;
+            _effects[0].gameObject.SetActive(true);
             if (_targetBall == _ballScore)
             {
-                //*win panel
-                Debug.Log("You win!");
+                Win();
             }
+        }
+
+        void Win()
+        {
+            _audios[3].Play();
+            Debug.Log("Win!");
         }
 
         public void GameOver()
         {
-            //!gameover panel
+            _audios[2].Play();
             Debug.Log("Game Over!");
         }
-        public void WidenTheHoop()
+        public void WidenTheHoop(Vector3 pos)
         {
+            _audios[1].Play();
+            _effects[1].transform.position = pos;
+            _effects[1].gameObject.SetActive(true);
             StartCoroutine(WidenHoopCoroutine());
         }
 
