@@ -4879,7 +4879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3445620572490120663, guid: 8b48da79e95bfb64d8bf8200cf1bf665, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.72
+      value: 5.75
       objectReference: {fileID: 0}
     - target: {fileID: 3445620572490120663, guid: 8b48da79e95bfb64d8bf8200cf1bf665, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5092,6 +5092,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4955828181230678697, guid: c22e177678fc8b741a379a8cd7e12d06, type: 3}
+      propertyPath: m_Radius
+      value: 0.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 6868215250204124088, guid: c22e177678fc8b741a379a8cd7e12d06, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00438
+      objectReference: {fileID: 0}
     - target: {fileID: 7046528810625616170, guid: c22e177678fc8b741a379a8cd7e12d06, type: 3}
       propertyPath: m_SphereColliders.Array.data[0].first
       value: 
@@ -5100,6 +5108,10 @@ PrefabInstance:
       propertyPath: m_SphereColliders.Array.data[0].second
       value: 
       objectReference: {fileID: 2130674671}
+    - target: {fileID: 8924251017026851530, guid: c22e177678fc8b741a379a8cd7e12d06, type: 3}
+      propertyPath: m_Name
+      value: ScoreReporterTop
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
