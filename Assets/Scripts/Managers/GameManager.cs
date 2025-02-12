@@ -13,12 +13,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _widdenHoop;
     [SerializeField] private GameObject[] _powerUpLocation;
 
-    [Header("Audio")]
-    [SerializeField] private AudioSource[] _audios;
-
     [Header("Partical Effects")]
     [SerializeField] private ParticleSystem[] _effects;
-
 
     [Header("UI")]
     [SerializeField] private Image[] _targetImage;
@@ -47,6 +43,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseGame();
+        }
+
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             if (_platform.transform.position.x > -7.3)
@@ -56,6 +57,20 @@ public class GameManager : MonoBehaviour
         {
             if (_platform.transform.position.x < 7.3)
                 _platform.transform.position = Vector3.Lerp(_platform.transform.position, new Vector3(_platform.transform.position.x + .3f, _platform.transform.position.y, _platform.transform.position.z), 0.50f);
+        }
+    }
+
+    private void PauseGame()
+    {
+        if (!_panels[0].activeSelf)
+        {
+            Time.timeScale = 0;
+            _panels[0].SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1;
+            _panels[0].SetActive(false);
         }
     }
 
@@ -71,7 +86,7 @@ public class GameManager : MonoBehaviour
     {
         _ballScore++;
         _targetImage[_ballScore - 1].sprite = _missionCheckSprite;
-        _audios[4].Play();
+        AudioManager.Instance.PlayBasketSound();
         _effects[0].transform.position = pos;
         _effects[0].gameObject.SetActive(true);
         if (_targetBall == _ballScore)
@@ -82,7 +97,7 @@ public class GameManager : MonoBehaviour
 
     void Win()
     {
-        _audios[3].Play();
+        AudioManager.Instance.PlayWinSound();
         _panels[1].SetActive(true);
         PlayerPrefs.GetInt("Level", PlayerPrefs.GetInt("Level") + 1);
         Time.timeScale=0;
@@ -90,13 +105,14 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        _audios[2].Play();
+        AudioManager.Instance.PlayGameOverSound();
         _panels[2].SetActive(true);
         Time.timeScale=0;
     }
+    
     public void WidenTheHoop(Vector3 pos)
     {
-        _audios[1].Play();
+        AudioManager.Instance.PlayWidenHoopSound();
         _effects[1].transform.position = pos;
         _effects[1].gameObject.SetActive(true);
         StartCoroutine(WidenHoopCoroutine());

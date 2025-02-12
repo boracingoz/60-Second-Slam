@@ -57,6 +57,13 @@ public class MaınMenuManager : MonoBehaviour
         settingsPanel.SetActive(true);
     }
 
+    public void BackToMainMenu()
+    {
+        PlayerPrefs.Save();
+        mainMenuPanel.SetActive(true);
+        settingsPanel.SetActive(false);
+    }
+
     public void ShowMainMenu()
     {
         mainMenuPanel.SetActive(true);

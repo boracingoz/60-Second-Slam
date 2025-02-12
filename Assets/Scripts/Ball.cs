@@ -6,25 +6,24 @@ public class Ball : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private AudioSource _ballAudio;
-    private Rigidbody _ballRb; // Rigidbody referansı
-
+    private Rigidbody _ballRb; 
     private void Start()
     {
-        _ballRb = GetComponent<Rigidbody>(); // Rigidbody bileşenini al
+        _ballRb = GetComponent<Rigidbody>();
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Basket")) 
         {
-            if (_ballRb.velocity.y < 0) // Eğer top aşağı doğru hareket ediyorsa sayı sayma
+            if (_ballRb.velocity.y > 0) 
             {
                 return;
             }
 
             _gameManager.Basket(transform.position);
         }
-        else if (other.CompareTag("GameOver")) // Buradaki hatalı else yapısını düzelttim
+        else if (other.CompareTag("GameOver"))
         {
             _gameManager.GameOver();
         }
