@@ -18,6 +18,10 @@ public class Ball : MonoBehaviour
         {
             if (_ballRb.velocity.y > 0) 
             {
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayBasketSound();
+                }
                 return;
             }
 
@@ -31,6 +35,9 @@ public class Ball : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        _ballAudio.Play();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBallCollisionSound();
+        }
     }
 }

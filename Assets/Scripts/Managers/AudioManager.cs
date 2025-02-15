@@ -6,7 +6,13 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource[] audioSources;
+    [SerializeField] private AudioSource[] audioSources;  // Ses kaynaklarının sırası:
+    // 0: Game Loop Müziği
+    // 1: Widen Hoop Power-up Sesi
+    // 2: Game Over Sesi
+    // 3: Win Sesi
+    // 4: Top Çarpma Sesi
+    // 5: Top Potadan Yukarı Girme Sesi
 
     [Header("UI Elements")]
     [SerializeField] private Slider volumeSlider;
@@ -29,9 +35,16 @@ public class AudioManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             InitializeVolume();
             LoadSoundState();
+            PlayGameLoopMusic();
         }
         else
         {
+            // Eğer zaten bir instance varsa, yeni instance'ı yok et
+            // ama önce müziği kontrol et
+            if (!Instance.audioSources[0].isPlaying)
+            {
+                Instance.PlayGameLoopMusic();
+            }
             Destroy(gameObject);
         }
     }
@@ -86,41 +99,96 @@ public class AudioManager : MonoBehaviour
         }
 
         if (volumeSlider != null)
+        {
             volumeSlider.value = isMuted ? 0f : lastVolume;
+            volumeSlider.onValueChanged.RemoveAllListeners();
+            volumeSlider.onValueChanged.AddListener(SetVolume);
+        }
     }
 
     public void SetVolume(float volume)
     {
+        if (volume <= 0)
+        {
+            if (!isMuted)
+            {
+                isMuted = true;
+                UpdateSoundState();
+                PlayerPrefs.SetInt(SOUND_STATE_PREFS, 1);
+            }
+        }
+        else if (isMuted)
+        {
+            isMuted = false;
+            UpdateSoundState();
+            PlayerPrefs.SetInt(SOUND_STATE_PREFS, 0);
+        }
+
         foreach (AudioSource source in audioSources)
         {
             if (source != null)
                 source.volume = volume;
         }
+
         PlayerPrefs.SetFloat(VOLUME_PREFS, volume);
         PlayerPrefs.Save();
     }
 
-    public void PlayBasketSound()
+    public void StopAllSounds()
     {
-        if (audioSources.Length > 4)
-            audioSources[4].Play();
+        foreach (AudioSource source in audioSources)
+        {
+            if (source != null)
+                source.Stop();
+        }
+        // Menüye dönüldüğünde veya yeni level başladığında Game Loop müziğini tekrar başlat
+        PlayGameLoopMusic();
     }
 
-    public void PlayWinSound()
+    // Ses çalma metodları
+    public void PlayGameLoopMusic()
     {
-        if (audioSources.Length > 3)
-            audioSources[3].Play();
-    }
-
-    public void PlayGameOverSound()
-    {
-        if (audioSources.Length > 2)
-            audioSources[2].Play();
+        if (audioSources.Length > 0 && !audioSources[0].isPlaying && !isMuted)
+        {
+            audioSources[0].loop = true;
+            audioSources[0].volume = PlayerPrefs.GetFloat(VOLUME_PREFS, 1f);
+            audioSources[0].Play();
+        }
     }
 
     public void PlayWidenHoopSound()
     {
         if (audioSources.Length > 1)
             audioSources[1].Play();
+    }
+
+    public void PlayGameOverSound()
+    {
+        if (audioSources.Length > 2)
+        {
+            audioSources[0].Stop();
+            audioSources[2].Play();
+        }
+    }
+
+    public void PlayWinSound()
+    {
+        if (audioSources.Length > 3)
+        {
+            audioSources[0].Stop();
+            audioSources[3].Play();
+        }
+    }
+
+    public void PlayBallCollisionSound()
+    {
+        if (audioSources.Length > 4)
+            audioSources[4].Play();
+    }
+
+    public void PlayBasketSound()
+    {
+        if (audioSources.Length > 5)
+            audioSources[5].Play();
     }
 }
