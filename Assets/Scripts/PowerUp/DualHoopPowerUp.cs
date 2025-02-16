@@ -7,11 +7,9 @@ public class DualHoopPowerUp : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _timeText; 
     [SerializeField] private int _startTime = 10; 
     [SerializeField] private GameManager _gameManager;
-    private bool isCountingStarted = false;
 
     private void Awake()
     {
-        // Başlangıçta text komponentini bul
         if (_timeText == null)
         {
             _timeText = GetComponentInChildren<TextMeshProUGUI>();
@@ -21,7 +19,6 @@ public class DualHoopPowerUp : MonoBehaviour
     private void OnEnable()
     {
         _startTime = 10;
-        isCountingStarted = false;
         UpdateTimeText();
         StartCoroutine(CountdownRoutine());
     }
@@ -36,7 +33,6 @@ public class DualHoopPowerUp : MonoBehaviour
 
     private IEnumerator CountdownRoutine()
     {
-        isCountingStarted = true;
         while (_startTime > 0)
         {
             yield return new WaitForSeconds(1f);
@@ -46,7 +42,6 @@ public class DualHoopPowerUp : MonoBehaviour
             if (_startTime <= 0)
             {
                 gameObject.SetActive(false);
-                isCountingStarted = false;
                 yield break;
             }
         }
@@ -58,7 +53,6 @@ public class DualHoopPowerUp : MonoBehaviour
         {
             StopAllCoroutines();
             gameObject.SetActive(false);
-            isCountingStarted = false;
 
             if (_gameManager != null)
             {

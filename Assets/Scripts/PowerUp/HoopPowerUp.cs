@@ -9,7 +9,7 @@ public class HoopPowerUp : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _time;
     [SerializeField] private int _startTime;
     [SerializeField] GameManager _gameManager;
-    // Start is called before the first frame update
+
     IEnumerator Start()
     {
         _time.text = _startTime.ToString();
@@ -23,13 +23,6 @@ public class HoopPowerUp : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }    
-    }
-
-   
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     void OnTriggerEnter(Collider other)

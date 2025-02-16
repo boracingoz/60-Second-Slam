@@ -1541,7 +1541,7 @@ PrefabInstance:
       objectReference: {fileID: 1556583674}
     - target: {fileID: 6807198964306958842, guid: 76b5ac0dd368a0946bb1e73b899f7c44, type: 3}
       propertyPath: _targetBall
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6807198964306958842, guid: 76b5ac0dd368a0946bb1e73b899f7c44, type: 3}
       propertyPath: _widdenHoop
@@ -1577,7 +1577,7 @@ PrefabInstance:
       objectReference: {fileID: 1384107367}
     - target: {fileID: 6807198964306958842, guid: 76b5ac0dd368a0946bb1e73b899f7c44, type: 3}
       propertyPath: _targetImage.Array.size
-      value: 1
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6807198964306958842, guid: 76b5ac0dd368a0946bb1e73b899f7c44, type: 3}
       propertyPath: _targetImage.Array.data[0]

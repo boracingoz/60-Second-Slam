@@ -6,13 +6,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource[] audioSources;  // Ses kaynaklarının sırası:
-    // 0: Game Loop Müziği
-    // 1: Widen Hoop Power-up Sesi
-    // 2: Game Over Sesi
-    // 3: Win Sesi
-    // 4: Top Çarpma Sesi
-    // 5: Top Potadan Yukarı Girme Sesi
+    [SerializeField] private AudioSource[] audioSources;
 
     [Header("UI Elements")]
     [SerializeField] private Slider volumeSlider;
@@ -39,8 +33,6 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            // Eğer zaten bir instance varsa, yeni instance'ı yok et
-            // ama önce müziği kontrol et
             if (!Instance.audioSources[0].isPlaying)
             {
                 Instance.PlayGameLoopMusic();
@@ -141,11 +133,9 @@ public class AudioManager : MonoBehaviour
             if (source != null)
                 source.Stop();
         }
-        // Menüye dönüldüğünde veya yeni level başladığında Game Loop müziğini tekrar başlat
         PlayGameLoopMusic();
     }
 
-    // Ses çalma metodları
     public void PlayGameLoopMusic()
     {
         if (audioSources.Length > 0 && !audioSources[0].isPlaying && !isMuted)

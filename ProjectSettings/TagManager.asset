@@ -7,6 +7,7 @@ TagManager:
   - Basket
   - GameOver
   - Ball
+  - SecondBasket
   layers:
   - Default
   - TransparentFX

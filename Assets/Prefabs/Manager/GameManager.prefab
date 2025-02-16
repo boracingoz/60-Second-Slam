@@ -47,7 +47,13 @@ MonoBehaviour:
   _platform: {fileID: 0}
   _hoop: {fileID: 0}
   _widdenHoop: {fileID: 0}
+  _dualHoopPowerUp: {fileID: 0}
+  _secondHoop: {fileID: 0}
   _powerUpLocation:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _dualHoopLocations:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -60,10 +66,29 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _missionCheckSprite: {fileID: 21300000, guid: 7fa252f33e7528c4f9e102f1e08d1851, type: 3}
-  _targetBall: 2
+  _baseTargetBall: 3
   _panels:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   _levelNO: {fileID: 0}
+  _backToMenuButton: {fileID: 0}
+  moveSpeed: 15
+  smoothTime: 0.1

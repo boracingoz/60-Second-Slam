@@ -6,8 +6,8 @@ public class SoundButton : MonoBehaviour
     private Button button;
     private Image buttonImage;
     
-    [SerializeField] private Color normalColor = Color.white;  // FFFFFF
-    [SerializeField] private Color mutedColor = Color.red;    // FF0000
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private Color mutedColor = Color.red;
 
     void Start()
     {

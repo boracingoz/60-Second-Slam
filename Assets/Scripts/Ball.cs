@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Basket")) 
+        if (other.CompareTag("Basket") || other.CompareTag("SecondBasket")) 
         {
             if (_ballRb.velocity.y > 0) 
             {
