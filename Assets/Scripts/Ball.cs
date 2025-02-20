@@ -6,7 +6,8 @@ public class Ball : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private AudioSource _ballAudio;
-    private Rigidbody _ballRb; 
+    private Rigidbody _ballRb;
+    
     private void Start()
     {
         _ballRb = GetComponent<Rigidbody>();
@@ -14,9 +15,9 @@ public class Ball : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Basket") || other.CompareTag("SecondBasket")) 
+        if (other.CompareTag("Basket") || other.CompareTag("SecondBasket"))
         {
-            if (_ballRb.velocity.y > 0) 
+            if (_ballRb.velocity.y > 0)
             {
                 if (AudioManager.Instance != null)
                 {

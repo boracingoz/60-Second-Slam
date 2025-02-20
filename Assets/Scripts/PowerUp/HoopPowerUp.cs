@@ -5,7 +5,6 @@ using TMPro;
 
 public class HoopPowerUp : MonoBehaviour
 {
-
     [SerializeField] private TextMeshProUGUI _time;
     [SerializeField] private int _startTime;
     [SerializeField] GameManager _gameManager;

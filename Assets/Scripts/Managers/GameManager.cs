@@ -13,8 +13,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _widdenHoop;
     [SerializeField] private GameObject _dualHoopPowerUp; 
     [SerializeField] private GameObject _secondHoop; 
-    [SerializeField] private GameObject[] _powerUpLocation; // İlk power-up lokasyonları
-    [SerializeField] private GameObject[] _dualHoopLocations; // Yeni power-up lokasyonları
+    [SerializeField] private GameObject[] _powerUpLocation;
+    [SerializeField] private GameObject[] _dualHoopLocations;
 
     [Header("Partical Effects")]
     [SerializeField] private ParticleSystem[] _effects;
@@ -29,16 +29,13 @@ public class GameManager : MonoBehaviour
 
     private int _ballScore;
 
-
     void Start()
     {
         _levelNO.text = "LEVEL: " + SceneManager.GetActiveScene().name;
 
         for (int i = 0; i < _targetBall; i++)
         {
-
             _targetImage[i].gameObject.SetActive(true);
-
         }
 
         Invoke("PowerUpsLocation", 3f);
@@ -68,22 +65,17 @@ public class GameManager : MonoBehaviour
                 _platform.transform.position = Vector3.Lerp(_platform.transform.position, new Vector3(_platform.transform.position.x + .3f, _platform.transform.position.y, _platform.transform.position.z), 0.50f);
         }
 
-        // TEST KODLARI - DAHA SONRA SİLİNECEK
         #if UNITY_EDITOR
-        // Q tuşuna basılınca DualHoop power-up'ı aktif et
         if (Input.GetKeyDown(KeyCode.Q))
         {
             CreateDualHoop(Vector3.zero);
         }
 
-        // 1 tuşuna basılınca ikinci potaya basket atmış gibi sayılsın
         if (Input.GetKeyDown(KeyCode.Alpha1) && _secondHoop != null && _secondHoop.activeSelf)
         {
             Basket(_secondHoop.transform.position);
-            Debug.Log("Top 2. potadan geçti!");
         }
         #endif
-        // TEST KODLARI SONU
     }
 
     private void PauseGame()
@@ -143,10 +135,8 @@ public class GameManager : MonoBehaviour
     {
         if (_secondHoop != null)
         {
-            // İkinci potayı aktif et
             _secondHoop.SetActive(true);
 
-            // Efekt göster
             if (_effects != null && _effects.Length > 1)
             {
                 _effects[1].gameObject.SetActive(true);
@@ -154,7 +144,6 @@ public class GameManager : MonoBehaviour
 
             yield return new WaitForSeconds(10f);
 
-            // Süre sonunda ikinci potayı deaktif et
             _secondHoop.SetActive(false);
         }
     }
@@ -165,6 +154,7 @@ public class GameManager : MonoBehaviour
         _targetImage[_ballScore - 1].sprite = _missionCheckSprite;
         AudioManager.Instance.PlayBasketSound();
         _effects[0].transform.position = pos;
+
         _effects[0].gameObject.SetActive(true);
         if (_targetBall == _ballScore)
         {
@@ -211,9 +201,7 @@ public class GameManager : MonoBehaviour
 
             case "Try":
                 Time.timeScale = 1;
-                // Önce sahneyi yükle
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                // Sonra müziği başlat
                 if (AudioManager.Instance != null)
                 {
                     AudioManager.Instance.StopAllSounds();
@@ -222,9 +210,7 @@ public class GameManager : MonoBehaviour
 
             case "Next":
                 Time.timeScale = 1;
-                // Önce sahneyi yükle
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-                // Sonra müziği başlat
                 if (AudioManager.Instance != null)
                 {
                     AudioManager.Instance.StopAllSounds();
@@ -271,10 +257,8 @@ public class GameManager : MonoBehaviour
                 targetImg.sprite = null;
         }
 
-        // Önce sahne yüklemesini yap, sonra sesleri yönet
         SceneManager.LoadScene("Menu");
         
-        // AudioManager'ı sıfırla
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.StopAllSounds();
