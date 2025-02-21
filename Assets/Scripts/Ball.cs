@@ -7,31 +7,65 @@ public class Ball : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private AudioSource _ballAudio;
     private Rigidbody _ballRb;
+    private Vector3 _initialPosition;
+    private Quaternion _initialRotation;
+    private bool _canScore = true;
+    private bool _isPassingThroughBasket = false;
     
     private void Start()
     {
         _ballRb = GetComponent<Rigidbody>();
+        // Başlangıç pozisyonunu ve rotasyonunu kaydet
+        _initialPosition = transform.position;
+        _initialRotation = transform.rotation;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Basket") || other.CompareTag("SecondBasket"))
+        if ((other.CompareTag("Basket") || other.CompareTag("SecondBasket")) && _canScore)
         {
-            if (_ballRb.velocity.y > 0)
-            {
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayBasketSound();
-                }
-                return;
-            }
-
-            _gameManager.Basket(transform.position);
+            _isPassingThroughBasket = true;
         }
         else if (other.CompareTag("GameOver"))
         {
             _gameManager.GameOver();
         }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if ((other.CompareTag("Basket") || other.CompareTag("SecondBasket")) && _isPassingThroughBasket && _canScore)
+        {
+            if (_ballRb.velocity.y < 0) // Top aşağı doğru düşerken
+            {
+                _canScore = false;
+                _isPassingThroughBasket = false;
+                
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayBasketSound();
+                }
+                
+                _gameManager.Basket(transform.position);
+                StartCoroutine(RespawnBall());
+            }
+        }
+    }
+
+    private IEnumerator RespawnBall()
+    {
+        yield return new WaitForSeconds(0.35f);
+        
+        // Topu başlangıç pozisyonuna getir
+        transform.position = _initialPosition;
+        transform.rotation = _initialRotation;
+        
+        // Fizik özelliklerini sıfırla
+        _ballRb.velocity = Vector3.zero;
+        _ballRb.angularVelocity = Vector3.zero;
+        
+        // Top yeniden basket yapabilir
+        _canScore = true;
     }
 
     void OnCollisionEnter(Collision other)
