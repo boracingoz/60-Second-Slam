@@ -27,12 +27,23 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            InitializeVolume();
             LoadSoundState();
+            InitializeVolume();
             PlayGameLoopMusic();
         }
         else
         {
+            if (volumeSlider != null)
+            {
+                volumeSlider.value = Instance.lastVolume;
+                volumeSlider.onValueChanged.RemoveAllListeners();
+                volumeSlider.onValueChanged.AddListener(Instance.SetVolume);
+            }
+            if (soundButtonImage != null)
+            {
+                soundButtonImage.sprite = Instance.isMuted ? Instance.soundOffSprite : Instance.soundOnSprite;
+                soundButtonImage.color = Instance.isMuted ? Instance.mutedButtonColor : Instance.normalButtonColor;
+            }
             if (!Instance.audioSources[0].isPlaying)
             {
                 Instance.PlayGameLoopMusic();
@@ -44,7 +55,6 @@ public class AudioManager : MonoBehaviour
     private void InitializeVolume()
     {
         float savedVolume = PlayerPrefs.GetFloat(VOLUME_PREFS, 1f);
-        lastVolume = savedVolume;
         
         if (volumeSlider != null)
         {
@@ -53,76 +63,78 @@ public class AudioManager : MonoBehaviour
             volumeSlider.onValueChanged.AddListener(SetVolume);
         }
 
-        // Apply the volume setting
-        foreach (AudioSource source in audioSources)
-        {
-            if (source != null)
-                source.volume = isMuted ? 0f : savedVolume;
-        }
+        ApplyVolumeToSources(savedVolume);
     }
 
     private void LoadSoundState()
     {
         isMuted = PlayerPrefs.GetInt(SOUND_STATE_PREFS, 0) == 1;
-        UpdateSoundState();
+        lastVolume = PlayerPrefs.GetFloat(VOLUME_PREFS, 1f);
+        
+        if (soundButtonImage != null)
+        {
+            soundButtonImage.sprite = isMuted ? soundOffSprite : soundOnSprite;
+            soundButtonImage.color = isMuted ? mutedButtonColor : normalButtonColor;
+        }
+    }
+
+    private void ApplyVolumeToSources(float volume)
+    {
+        float effectiveVolume = isMuted || Mathf.Approximately(volume, 0f) ? 0f : volume;
+        foreach (AudioSource source in audioSources)
+        {
+            if (source != null)
+            {
+                source.volume = effectiveVolume;
+            }
+        }
+    }
+
+    public void SetVolume(float volume)
+    {
+        if (Mathf.Approximately(volume, 0f))
+        {
+            if (!isMuted)
+            {
+                isMuted = true;
+                if (soundButtonImage != null)
+                {
+                    soundButtonImage.sprite = soundOffSprite;
+                    soundButtonImage.color = mutedButtonColor;
+                }
+            }
+        }
+        else if (isMuted)
+        {
+            isMuted = false;
+            if (soundButtonImage != null)
+            {
+                soundButtonImage.sprite = soundOnSprite;
+                soundButtonImage.color = normalButtonColor;
+            }
+        }
+
+        lastVolume = volume;
+        ApplyVolumeToSources(volume);
+
+        PlayerPrefs.SetFloat(VOLUME_PREFS, volume);
+        PlayerPrefs.SetInt(SOUND_STATE_PREFS, isMuted ? 1 : 0);
+        PlayerPrefs.Save();
     }
 
     public void ToggleSound()
     {
         isMuted = !isMuted;
-        UpdateSoundState();
-        PlayerPrefs.SetInt(SOUND_STATE_PREFS, isMuted ? 1 : 0);
-        PlayerPrefs.Save();
-    }
-
-    private void UpdateSoundState()
-    {
-        float currentVolume = isMuted ? 0f : lastVolume;
         
-        // Update all audio sources
-        foreach (AudioSource source in audioSources)
-        {
-            if (source != null)
-                source.volume = currentVolume;
-        }
-
-        // Update UI elements
         if (soundButtonImage != null)
         {
             soundButtonImage.sprite = isMuted ? soundOffSprite : soundOnSprite;
             soundButtonImage.color = isMuted ? mutedButtonColor : normalButtonColor;
         }
 
-        // Update slider without triggering events
-        if (volumeSlider != null)
-        {
-            volumeSlider.onValueChanged.RemoveAllListeners();
-            volumeSlider.value = lastVolume;  // Always show the actual volume level
-            volumeSlider.onValueChanged.AddListener(SetVolume);
-        }
-    }
-
-    public void SetVolume(float volume)
-    {
-        // Store the volume value regardless of mute state
-        lastVolume = volume;
+        ApplyVolumeToSources(lastVolume);
         
-        // Update audio sources with the current volume, respecting mute state
-        float effectiveVolume = isMuted ? 0f : volume;
-        foreach (AudioSource source in audioSources)
-        {
-            if (source != null)
-                source.volume = effectiveVolume;
-        }
-
-        // Update UI if needed
-        if (volumeSlider != null && !Mathf.Approximately(volumeSlider.value, volume))
-        {
-            volumeSlider.value = volume;
-        }
-
-        // Save the volume setting
-        PlayerPrefs.SetFloat(VOLUME_PREFS, volume);
+        PlayerPrefs.SetInt(SOUND_STATE_PREFS, isMuted ? 1 : 0);
         PlayerPrefs.Save();
     }
 
