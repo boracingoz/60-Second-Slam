@@ -45,12 +45,19 @@ public class AudioManager : MonoBehaviour
     {
         float savedVolume = PlayerPrefs.GetFloat(VOLUME_PREFS, 1f);
         lastVolume = savedVolume;
-        SetVolume(savedVolume);
         
         if (volumeSlider != null)
         {
             volumeSlider.value = savedVolume;
+            volumeSlider.onValueChanged.RemoveAllListeners();
             volumeSlider.onValueChanged.AddListener(SetVolume);
+        }
+
+        // Apply the volume setting
+        foreach (AudioSource source in audioSources)
+        {
+            if (source != null)
+                source.volume = isMuted ? 0f : savedVolume;
         }
     }
 
@@ -70,58 +77,51 @@ public class AudioManager : MonoBehaviour
 
     private void UpdateSoundState()
     {
-        if (isMuted)
+        float currentVolume = isMuted ? 0f : lastVolume;
+        
+        // Update all audio sources
+        foreach (AudioSource source in audioSources)
         {
-            lastVolume = volumeSlider != null ? volumeSlider.value : 1f;
-            SetVolume(0f);
-            if (soundButtonImage != null)
-            {
-                soundButtonImage.sprite = soundOffSprite;
-                soundButtonImage.color = mutedButtonColor;
-            }
-        }
-        else
-        {
-            SetVolume(lastVolume);
-            if (soundButtonImage != null)
-            {
-                soundButtonImage.sprite = soundOnSprite;
-                soundButtonImage.color = normalButtonColor;
-            }
+            if (source != null)
+                source.volume = currentVolume;
         }
 
+        // Update UI elements
+        if (soundButtonImage != null)
+        {
+            soundButtonImage.sprite = isMuted ? soundOffSprite : soundOnSprite;
+            soundButtonImage.color = isMuted ? mutedButtonColor : normalButtonColor;
+        }
+
+        // Update slider without triggering events
         if (volumeSlider != null)
         {
-            volumeSlider.value = isMuted ? 0f : lastVolume;
             volumeSlider.onValueChanged.RemoveAllListeners();
+            volumeSlider.value = lastVolume;  // Always show the actual volume level
             volumeSlider.onValueChanged.AddListener(SetVolume);
         }
     }
 
     public void SetVolume(float volume)
     {
-        if (volume <= 0)
-        {
-            if (!isMuted)
-            {
-                isMuted = true;
-                UpdateSoundState();
-                PlayerPrefs.SetInt(SOUND_STATE_PREFS, 1);
-            }
-        }
-        else if (isMuted)
-        {
-            isMuted = false;
-            UpdateSoundState();
-            PlayerPrefs.SetInt(SOUND_STATE_PREFS, 0);
-        }
-
+        // Store the volume value regardless of mute state
+        lastVolume = volume;
+        
+        // Update audio sources with the current volume, respecting mute state
+        float effectiveVolume = isMuted ? 0f : volume;
         foreach (AudioSource source in audioSources)
         {
             if (source != null)
-                source.volume = volume;
+                source.volume = effectiveVolume;
         }
 
+        // Update UI if needed
+        if (volumeSlider != null && !Mathf.Approximately(volumeSlider.value, volume))
+        {
+            volumeSlider.value = volume;
+        }
+
+        // Save the volume setting
         PlayerPrefs.SetFloat(VOLUME_PREFS, volume);
         PlayerPrefs.Save();
     }
