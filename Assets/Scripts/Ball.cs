@@ -15,7 +15,6 @@ public class Ball : MonoBehaviour
     private void Start()
     {
         _ballRb = GetComponent<Rigidbody>();
-        // Başlangıç pozisyonunu ve rotasyonunu kaydet
         _initialPosition = transform.position;
         _initialRotation = transform.rotation;
     }
@@ -36,7 +35,7 @@ public class Ball : MonoBehaviour
     {
         if ((other.CompareTag("Basket") || other.CompareTag("SecondBasket")) && _isPassingThroughBasket && _canScore)
         {
-            if (_ballRb.velocity.y < 0) // Top aşağı doğru düşerken
+            if (_ballRb.velocity.y < 0)
             {
                 _canScore = false;
                 _isPassingThroughBasket = false;
@@ -56,15 +55,12 @@ public class Ball : MonoBehaviour
     {
         yield return new WaitForSeconds(0.35f);
         
-        // Topu başlangıç pozisyonuna getir
         transform.position = _initialPosition;
         transform.rotation = _initialRotation;
         
-        // Fizik özelliklerini sıfırla
         _ballRb.velocity = Vector3.zero;
         _ballRb.angularVelocity = Vector3.zero;
         
-        // Top yeniden basket yapabilir
         _canScore = true;
     }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using YG;
 
 public class GameManager : MonoBehaviour
 {
@@ -64,8 +65,7 @@ public class GameManager : MonoBehaviour
             if (_platform.transform.position.x < 7.3)
                 _platform.transform.position = Vector3.Lerp(_platform.transform.position, new Vector3(_platform.transform.position.x + .5f, _platform.transform.position.y, _platform.transform.position.z), 0.50f);
         }
-
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Q))
         {
             CreateDualHoop(Vector3.zero);
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
         {
             Basket(_secondHoop.transform.position);
         }
-        #endif
+#endif
     }
 
     private void PauseGame()
@@ -185,6 +185,24 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WidenHoopCoroutine());
     }
 
+    private IEnumerator LoadSceneWithAd(int sceneIndex)
+    {
+        Time.timeScale = 1;
+        
+        if (YandexGame.SDKEnabled)
+        {
+            YandexGame.FullscreenShow();
+            yield return new WaitForSeconds(0.5f);
+        }
+        
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopAllSounds();
+        }
+        
+        SceneManager.LoadScene(sceneIndex);
+    }
+
     public void Buttons(string value)
     {
         switch (value)
@@ -200,21 +218,11 @@ public class GameManager : MonoBehaviour
                 break;
 
             case "Try":
-                Time.timeScale = 1;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.StopAllSounds();
-                }
+                StartCoroutine(LoadSceneWithAd(SceneManager.GetActiveScene().buildIndex));
                 break;
 
             case "Next":
-                Time.timeScale = 1;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.StopAllSounds();
-                }
+                StartCoroutine(LoadSceneWithAd(SceneManager.GetActiveScene().buildIndex + 1));
                 break;
 
             case "Settings":
@@ -225,7 +233,6 @@ public class GameManager : MonoBehaviour
             case "Exit":
                 Time.timeScale = 1;
                 Application.Quit();
-                Debug.Log("Exit game...");
                 break;
         }
     }
