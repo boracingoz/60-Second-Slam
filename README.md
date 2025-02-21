@@ -1,10 +1,10 @@
-# 60 Second Slam
+# Hoopocalypse
 
 A hypercasual basketball game developed with Unity where players aim to score baskets by bouncing the ball off a moving platform into moving hoops.
 
 ## 🎮 Game Description
 
-60 Second Slam is an engaging hypercasual game that combines elements of classic breakout games with basketball. Players control a moving platform to bounce a basketball into moving hoops to score points. The game features:
+Hoopocalypse is an engaging hypercasual game that combines elements of classic breakout games with basketball. Players control a moving platform to bounce a basketball into moving hoops to score points. The game features:
 
 - Simple and addictive gameplay mechanics
 - Moving platform controlled by arrow keys
