@@ -29,9 +29,22 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button _backToMenuButton;
 
     private int _ballScore;
+    private bool isGameStarted = false;
 
-    void Start()
+    void Awake()
     {
+        if (!YandexGame.Instance)
+        {
+            Debug.LogWarning("YandexGame instance not found!");
+            return;
+        }
+    }
+
+    IEnumerator Start()
+    {
+        // Tüm kaynakların yüklenmesini bekle
+        yield return new WaitForSeconds(0.5f);
+        
         _levelNO.text = "LEVEL: " + SceneManager.GetActiveScene().name;
 
         for (int i = 0; i < _targetBall; i++)
@@ -45,6 +58,23 @@ public class GameManager : MonoBehaviour
         if (_backToMenuButton != null)
         {
             _backToMenuButton.onClick.AddListener(BackToMainMenu);
+        }
+
+        // Önce oyunun hazır olduğunu bildir, sonra oyunu başlat
+        if (YandexGame.Instance)
+        {
+            YandexGame.Instance._GameReadyAPI();
+            YandexGame.Instance._GameplayStart();
+        }
+    }
+
+    void OnEnable()
+    {
+        // İlk kez oyun başladığında
+        if (!isGameStarted && YandexGame.Instance)
+        {
+            isGameStarted = true;
+            YandexGame.Instance._GameplayStart();
         }
     }
 
@@ -78,17 +108,27 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    private void PauseGame()
+    public void PauseGame()
     {
-        if (!_panels[0].activeSelf)
+        Time.timeScale = 0;
+        _panels[0].SetActive(true);
+
+        // Oyun duraklatıldığında Yandex'e bildir
+        if (YandexGame.Instance)
         {
-            Time.timeScale = 0;
-            _panels[0].SetActive(true);
+            YandexGame.Instance._GameplayStop();
         }
-        else
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
+        _panels[0].SetActive(false);
+
+        // Oyun devam ettiğinde Yandex'e bildir
+        if (YandexGame.Instance)
         {
-            Time.timeScale = 1;
-            _panels[0].SetActive(false);
+            YandexGame.Instance._GameplayStart();
         }
     }
 
@@ -162,21 +202,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Win()
-    {
-        Time.timeScale = 0;
-        AudioManager.Instance.PlayWinSound();
-        _panels[1].SetActive(true);
-        PlayerPrefs.SetInt("Level", PlayerPrefs.GetInt("Level") + 1);
-    }
-
     public void GameOver()
     {
         Time.timeScale = 0;
-        AudioManager.Instance.PlayGameOverSound();
         _panels[2].SetActive(true);
+
+        // Oyun bittiğinde Yandex'e bildir
+        if (YandexGame.Instance)
+        {
+            YandexGame.Instance._GameplayStop();
+        }
     }
     
+    public void Win()
+    {
+        Time.timeScale = 0;
+        _panels[1].SetActive(true);
+
+        // Oyun kazanıldığında Yandex'e bildir
+        if (YandexGame.Instance)
+        {
+            YandexGame.Instance._GameplayStop();
+        }
+    }
+
     public void WidenTheHoop(Vector3 pos)
     {
         AudioManager.Instance.PlayWidenHoopSound();
@@ -189,35 +238,37 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         
-        if (YandexGame.SDKEnabled)
+        // Oyun duraklatıldığında bildir
+        if (YandexGame.Instance)
+        {
+            YandexGame.Instance._GameplayStop();
+        }
+
+        // Reklam göster
+        if (YandexGame.Instance)
         {
             YandexGame.FullscreenShow();
-            yield return new WaitForSeconds(0.5f);
         }
         
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.StopAllSounds();
-        }
-        
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(sceneIndex);
+
+        // Yeni sahne yüklendiğinde oyunu başlat
+        if (YandexGame.Instance)
+        {
+            YandexGame.Instance._GameplayStart();
+        }
     }
 
-    public void Buttons(string value)
+    public void Buttons(string buttonName)
     {
-        switch (value)
+        switch (buttonName)
         {
-            case "Stop":
-                Time.timeScale = 0;
-                _panels[0].SetActive(true);
-                break;
-
             case "Resume":
-                Time.timeScale = 1;
-                _panels[0].SetActive(false);
+                ResumeGame();
                 break;
 
-            case "Try":
+            case "Try Again":
                 StartCoroutine(LoadSceneWithAd(SceneManager.GetActiveScene().buildIndex));
                 break;
 
@@ -228,11 +279,6 @@ public class GameManager : MonoBehaviour
             case "Settings":
                 Time.timeScale = 1;
                 _panels[0].SetActive(false);
-                break;
-
-            case "Exit":
-                Time.timeScale = 1;
-                Application.Quit();
                 break;
         }
     }

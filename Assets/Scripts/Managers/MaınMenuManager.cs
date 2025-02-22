@@ -100,9 +100,4 @@ public class MaınMenuManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("Language", languageIndex);
     }
-
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
 }
